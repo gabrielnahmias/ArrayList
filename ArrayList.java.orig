@@ -1,0 +1,159 @@
+import java.util.NoSuchElementException;
+import java.util.Iterator;
+
+public class ArrayList<T> implements List<T>, Iterable<T>
+{
+    private static final int DEFAULT_CAPACITY = 2;
+    
+    private T[] data = (T[])(new Object[DEFAULT_CAPACITY]);
+    private int size = 0;
+    
+    private class myIterator implements Iterator<T> {
+        private int nextIndex = 0;
+        private int lastIndexReturned = -1;
+        
+        public boolean hasNext(){
+            return(nextIndex < size);
+        }
+        
+        public T next(){
+            if (hasNext()){
+                lastIndexReturned = nextIndex;
+                nextIndex++;
+                return data[lastIndexReturned];
+                
+        
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+        
+        public void remove(){
+            if (lastIndexReturned >= 0){
+                ArrayList.this.remove(lastIndexReturned);
+                nextIndex--;
+                lastIndexReturned = -1;
+                
+            } else {
+                throw new IllegalStateException();
+            }
+            
+        }
+        
+        
+    }
+    
+    // Adds a new item to the end of the list
+    public void add(T newValue){ 
+    
+        if (size == data.length){
+            T newArray[] = (T[])(new Object[data.length*2]);
+            for(int i = 0; i < data.length; i++){
+                newArray[i] = data[i];
+            }
+            data = newArray;
+            System.err.println("ArrayList has reached max capacity; increasing capacity to " + data.length);
+        }
+        
+        data[size] = newValue;
+        size += 1;
+    }
+    
+    public int addAll(ArrayList a) {
+        int total = 0;
+        return total() + a.total();
+    }
+    
+    public boolean contains(T o) {
+        for (int i = 0; i < size(); i++) {
+            T current = get(i);
+            if (current == o)
+                return true;
+            /*else
+                continue;*/
+        }
+        return false;
+    }
+    
+    // Returns the item at the specified index (i).
+    // Big O: (1)
+    public T get(int index){ 
+        if (index >= 0 && index < size){
+            return data[index];
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+
+    public int indexOf(Object e) {
+        for (int i = 0; i < size; i++) {
+           if (equals(data[i]))
+             return i;
+    	}
+        return -1;
+    }
+    
+    public Iterator<T> iterator(){
+        return new myIterator();
+    }
+    
+    // removes the item at index i from the list
+    public void remove(int index){ 
+        if ( index >=0 && index < size){
+            for(int i = index; i < size - 1; i++){
+                data[i] = data[i + 1];
+            }
+            
+            //data[size - 1] = null;
+            size -= 1;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+    
+    // Changes the current list by only keeping the intersection of its
+    // values and the specified list's.
+    public void retainAll(ArrayList a){ 
+        for (int i = 0; i < size(); i++) {
+            T current = get(i);
+            if (!a.contains(current))
+                remove(i);
+        }
+    }
+    
+    // Replaces the item at index i with a new item
+    public void set(int index, T newValue){ 
+        if (index >= 0 && index < size){
+            data[index] = newValue;
+        } else {
+            throw new NoSuchElementException();
+        }
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    public String toString(){
+        String result = "[";
+        for(int i = 0; i < size; i++){
+            if (i == size - 1){
+                result += data[i].toString();
+            } else {
+                result += (data[i]+",");
+            }
+        }
+        
+        result += "]";
+        return result;
+    }
+    
+    public int total() {
+        int total = 0;
+        for (int i = 0; i < size(); i++) {
+            int curr = (Integer)get(i);
+            total += curr;
+        }
+        return total;
+    }
+}
